@@ -12,14 +12,17 @@ from pathlib import Path
 from datetime import datetime
 
 # Ranges of pitch changes (only positive for now, need to fix bug in matlab code)
-pitch_array = [0]
+pitch_array = [-10,-5,-2,0,2,5,10]
 
 # Ranges for RPM and Mass flow rate (from excel calcs)
 # for now having RPM dicated what mass flow rate would be
 # RPM_array = [10000, 10500, 11000, 11500, 12000, 12500, 15000, 17500]
 # mass_flow_array = [0.2478, 0.2604, 0.2728, 0.2852, 0.2976, 0.3099, 0.3720, 0.4340]
-RPM_array = [9549, 10931]
-mass_flow_array = [0.2368, 0.2711]
+# RPM_array = [9549, 10931]
+# mass_flow_array = [0.2368, 0.2711]
+# 1-7-2026: using scaled mass flow calcs from excel spreadsheet
+RPM_array = [10000, 12500, 15000, 17500, 20000, 22500, 25000]
+mass_flow_array = [0.793, 0.991, 1.189, 1.388, 1.586, 1.784, 1.983]
 
 var_array = [pitch_array, RPM_array]
 
@@ -302,7 +305,7 @@ if __name__ == "__main__":
     ### USER INPUT ###
     # Ensure temp_results folder is empty before running, will delete during run
     # but not by itself during the 1st iteration, need to update this
-    results_folder_name = "testing_12-29-2025" # Ex. monte_12-26-2025
+    results_folder_name = "scaled_mass_flow_1-7-2026" # Ex. monte_12-26-2025
 
     # Build configurations array
     cfgs = build_run_configs(pitch_array, RPM_array, mass_flow_array)

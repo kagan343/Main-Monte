@@ -1,0 +1,577 @@
+# Session file started:  2025/11/23 19:03:35
+# CFX-25.1
+
+# Case Parameters from monte carlo
+# RPM = 12500
+# MASS_FLOW = 0.31 [kg s^-1]
+# PITCH_DEG = 5 [deg]
+
+
+COMMAND FILE:
+  CFX Pre Version = 25.1
+END
+
+>load mode=new
+> update
+
+> gtmImport filename=C:/Users/kagan/Desktop_v2/Projects-Tutorials/Minature \
+TurboJet/Prototype_v2/ANSYS/Batch Run/temp_gtm_file_load/temp_gtm_file.gtm, type=\
+GTM, units=in, nameStrategy= Assembly
+> update
+
+
+AXIS: TurboPre
+  Option = Coord Frame
+  Visibility = true
+  Reference Coord Frame = Coord 0
+  Axis of Rotation = Z
+END
+> update
+
+ROTATION MARKER: Marker R1
+  Visibility = true
+  Location = INBlock SHROUD,OUTBlock SHROUD,Passage SHROUD
+  Rotation Speed = 12500 [rev min^-1]
+  AXIS DEFINITION:
+    Option = Coordinate Axis
+    Rotation Axis = Coord 0.3
+  END
+END
+> update
+
+>delete /FLOW:Flow Analysis 1/DOMAIN:Default Domain,/FLOW:Flow Analysis 1/\
+ANALYSIS TYPE,/FLOW:Flow Analysis 1/OUTPUT CONTROL/MONITOR OBJECTS/EFFICIENCY \
+OUTPUT,/FLOW:Flow Analysis 1/OUTPUT CONTROL/EFFICIENCY OUTPUT,/TURBO POST DATA,/\
+FLOW:Flow Analysis 1/TRANSIENT BLADE ROW MODELS,/FLOW:Flow Analysis 1/OUTPUT \
+CONTROL/TRANSIENT BLADE ROW OUTPUT
+FLOW: Flow Analysis 1
+  &replace OUTPUT CONTROL:
+    RESULTS:
+      File Compression Level = Default
+      Option = Standard
+    END
+    MONITOR OBJECTS:
+      EFFICIENCY OUTPUT:
+        Inflow Boundary = R1 Inlet
+        Option = Output To Solver Monitor
+        Outflow Boundary = R1 Outlet
+      END
+      MONITOR BALANCES:
+        Option = Full
+      END
+      MONITOR FORCES:
+        Option = Full
+      END
+      MONITOR PARTICLES:
+        Option = Full
+      END
+      MONITOR RESIDUALS:
+        Option = Full
+      END
+      MONITOR TOTALS:
+        Option = Full
+      END
+    END
+  END
+  &replace SOLUTION UNITS:
+    Angle Units = [rad]
+    Length Units = [m]
+    Mass Units = [kg]
+    Solid Angle Units = [sr]
+    Temperature Units = [K]
+    Time Units = [s]
+  END
+  &replace SOLVER CONTROL:
+    Turbulence Numerics = First Order
+    ADVECTION SCHEME:
+      Option = High Resolution
+    END
+    CONVERGENCE CONTROL:
+      Length Scale Option = Conservative
+      Maximum Number of Iterations = 100
+      Minimum Number of Iterations = 1
+      Timescale Control = Auto Timescale
+      Timescale Factor = 1.0
+    END
+    CONVERGENCE CRITERIA:
+      Residual Target = 1.E-4
+      Residual Type = RMS
+    END
+    DYNAMIC MODEL CONTROL:
+      Global Dynamic Model Control = On
+    END
+    INTERRUPT CONTROL:
+      Option = Any Interrupt
+      CONVERGENCE CONDITIONS:
+        Option = Default Conditions
+      END
+    END
+  END
+  &replace ANALYSIS TYPE:
+    Option = Steady State
+    EXTERNAL SOLVER COUPLING:
+      Option = None
+    END
+  END
+  &replace DOMAIN: R1
+    Coord Frame = Coord 0
+    Domain Type = Fluid
+    Location = Inlet,Outlet,Passage Main
+    Number of Passages in 360 = 36
+    Number of Passages in Component = 1
+    DOMAIN MODELS:
+      BUOYANCY MODEL:
+        Option = Non Buoyant
+      END
+      DOMAIN MOTION:
+        Alternate Rotation Model = true
+        Angular Velocity = 10931 [rev min^-1]
+        Option = Rotating
+        AXIS DEFINITION:
+          Option = Coordinate Axis
+          Rotation Axis = Coord 0.3
+        END
+      END
+      MESH DEFORMATION:
+        Option = None
+      END
+      REFERENCE PRESSURE:
+        Reference Pressure = 1 [atm]
+      END
+    END
+    FLUID DEFINITION: Air Ideal Gas
+      Material = Air Ideal Gas
+      Option = Material Library
+      MORPHOLOGY:
+        Option = Continuous Fluid
+      END
+    END
+    FLUID MODELS:
+      COMBUSTION MODEL:
+        Option = None
+      END
+      HEAT TRANSFER MODEL:
+        Include Viscous Work Term = True
+        Option = Total Energy
+      END
+      THERMAL RADIATION MODEL:
+        Option = None
+      END
+      TURBULENCE MODEL:
+        Option = SST
+      END
+      TURBULENT WALL FUNCTIONS:
+        High Speed Model = Off
+        Option = Automatic
+      END
+    END
+    BOUNDARY: R1 Hub
+      Boundary Type = WALL
+      Coord Frame = Coord 0
+      Create Other Side = Off
+      Frame Type = Rotating
+      Interface Boundary = Off
+      Location = INBlock HUB,OUTBlock HUB,Passage HUB
+      BOUNDARY CONDITIONS:
+        HEAT TRANSFER:
+          Option = Adiabatic
+        END
+        MASS AND MOMENTUM:
+          Option = No Slip Wall
+        END
+        WALL ROUGHNESS:
+          Option = Smooth Wall
+        END
+      END
+    END
+    BOUNDARY: R1 Blade
+      Boundary Type = WALL
+      Create Other Side = Off
+      Frame Type = Rotating
+      Interface Boundary = Off
+      Location = BLADE
+      BOUNDARY CONDITIONS:
+        HEAT TRANSFER:
+          Option = Adiabatic
+        END
+        MASS AND MOMENTUM:
+          Option = No Slip Wall
+        END
+        WALL ROUGHNESS:
+          Option = Smooth Wall
+        END
+      END
+    END
+    BOUNDARY: R1 Inlet
+      Boundary Type = INLET
+      Frame Type = Stationary
+      Interface Boundary = Off
+      Location = INBlock INFLOW
+      BOUNDARY CONDITIONS:
+        FLOW DIRECTION:
+          Option = Normal to Boundary Condition
+        END
+        FLOW REGIME:
+          Option = Subsonic
+        END
+        HEAT TRANSFER:
+          Option = Stationary Frame Total Temperature
+          Stationary Frame Total Temperature = 295 [K]
+        END
+        MASS AND MOMENTUM:
+          Option = Stationary Frame Total Pressure
+          Relative Pressure = 1 [atm]
+        END
+        TURBULENCE:
+          Option = Medium Intensity and Eddy Viscosity Ratio
+        END
+      END
+    END
+    BOUNDARY: R1 Outlet
+      Boundary Type = OUTLET
+      Frame Type = Stationary
+      Interface Boundary = Off
+      Location = OUTBlock OUTFLOW
+      BOUNDARY CONDITIONS:
+        FLOW REGIME:
+          Option = Subsonic
+        END
+        MASS AND MOMENTUM:
+          Mass Flow Rate = 0.31 [kg s^-1]
+          Mass Flow Rate Area = Total for All Sectors
+          Option = Mass Flow Rate
+        END
+      END
+    END
+    BOUNDARY: R1 Shroud
+      Boundary Type = WALL
+      Create Other Side = Off
+      Frame Type = Rotating
+      Interface Boundary = Off
+      Location = INBlock SHROUD,OUTBlock SHROUD,Passage SHROUD
+      BOUNDARY CONDITIONS:
+        HEAT TRANSFER:
+          Option = Adiabatic
+        END
+        MASS AND MOMENTUM:
+          Option = No Slip Wall
+          WALL VELOCITY:
+            Option = Counter Rotating Wall
+          END
+        END
+        WALL ROUGHNESS:
+          Option = Smooth Wall
+        END
+      END
+    END
+  END
+  &replace DOMAIN INTERFACE: R1 to R1 Periodic 1
+    Filter Domain List1 = R1
+    Filter Domain List2 = R1
+    Interface Region List1 = INBlock PER1
+    Interface Region List2 = INBlock PER2
+    Interface Type = Fluid Fluid
+    INTERFACE MODELS:
+      Option = Rotational Periodicity
+      AXIS DEFINITION:
+        Option = Coordinate Axis
+        Rotation Axis = Coord 0.3
+      END
+    END
+    MESH CONNECTION:
+      Option = Automatic
+    END
+  END
+  &replace DOMAIN INTERFACE: R1 to R1 Periodic 2
+    Filter Domain List1 = R1
+    Filter Domain List2 = R1
+    Interface Region List1 = OUTBlock PER1
+    Interface Region List2 = OUTBlock PER2
+    Interface Type = Fluid Fluid
+    INTERFACE MODELS:
+      Option = Rotational Periodicity
+      AXIS DEFINITION:
+        Option = Coordinate Axis
+        Rotation Axis = Coord 0.3
+      END
+    END
+    MESH CONNECTION:
+      Option = Automatic
+    END
+  END
+  &replace DOMAIN INTERFACE: R1 to R1 Periodic 3
+    Filter Domain List1 = R1
+    Filter Domain List2 = R1
+    Interface Region List1 = Passage PER1
+    Interface Region List2 = Passage PER2
+    Interface Type = Fluid Fluid
+    INTERFACE MODELS:
+      Option = Rotational Periodicity
+      AXIS DEFINITION:
+        Option = Coordinate Axis
+        Rotation Axis = Coord 0.3
+      END
+    END
+    MESH CONNECTION:
+      Option = Automatic
+    END
+  END
+END
+
+>physicsupdate
+TURBO POST DATA:
+  Machine Type = Axial Compressor
+  Component Order = R1
+  Flow Type = Compressible
+  Reference Pressure = 1 [atm]
+  Rotation Axis From = 0 [m], 0 [m], 0 [m]
+  Rotation Axis To = 0 [m], 0 [m], 1 [m]
+  TURBO POST COMPONENT: R1
+    Domain Name = R1
+    Domain Motion = Rotating
+    Number of Components in 360 = 36
+    Number of Passages in 360 = 36
+    Number of Passages in Component = 1
+    Complete Component = False
+    Hub Region = INBlock HUB, OUTBlock HUB, Passage HUB
+    Blade Region = BLADE
+    Inlet Region = INBlock INFLOW
+    Outlet Region = OUTBlock OUTFLOW
+    Shroud Region = INBlock SHROUD, OUTBlock SHROUD, Passage SHROUD
+    Periodic 1 Region = INBlock PER1, OUTBlock PER1, Passage PER1
+    Periodic 2 Region = INBlock PER2, OUTBlock PER2, Passage PER2
+  END
+END
+> update
+
+>delete /AXIS:TurboPre
+> update
+
+>delete /ROTATION MARKER:Marker R1
+> update
+
+LIBRARY:
+  CEL:
+    EXPRESSIONS:
+      TemperatureRatio=massFlowAveAbs(Total Pressure in Stn Frame )@R1 \
+Outlet/massFlowAveAbs(Total Pressure in Stn Frame )@R1 Inlet
+    END
+  END
+END
+> update
+
+LIBRARY:
+  CEL:
+    EXPRESSIONS:
+      PressureRatio=massFlowAveAbs(Total Pressure in Stn Frame )@R1 Outlet/\
+massFlowAveAbs(Total Pressure in Stn Frame )@R1 Inlet
+    END
+  END
+END
+> update
+
+LIBRARY:
+  CEL:
+    EXPRESSIONS:
+      TemperatureRatio=massFlowAveAbs(Total Temperature in Stn Frame )@R1 \
+Outlet/massFlowAveAbs(Total Temperature in Stn Frame )@R1 Inlet
+    END
+  END
+END
+> update
+
+FLOW: Flow Analysis 1
+  &replace   OUTPUT CONTROL:
+    MONITOR OBJECTS:
+      EFFICIENCY OUTPUT:
+        Efficiency Calculation Method = Total to Total
+        Efficiency Type = Both Compression and Expansion
+        Inflow Boundary = R1 Inlet
+        Option = Output To Solver Monitor
+        Outflow Boundary = R1 Outlet
+      END # EFFICIENCY OUTPUT:
+      MONITOR BALANCES:
+        Option = Full
+      END # MONITOR BALANCES:
+      MONITOR FORCES:
+        Option = Full
+      END # MONITOR FORCES:
+      MONITOR PARTICLES:
+        Option = Full
+      END # MONITOR PARTICLES:
+      MONITOR POINT: TR
+        Coord Frame = Coord 0
+        Expression Value = TemperatureRatio
+        Option = Expression
+      END # MONITOR POINT:TR
+      MONITOR RESIDUALS:
+        Option = Full
+      END # MONITOR RESIDUALS:
+      MONITOR TOTALS:
+        Option = Full
+      END # MONITOR TOTALS:
+    END # MONITOR OBJECTS:
+    RESULTS:
+      File Compression Level = Default
+      Option = Standard
+    END # RESULTS:
+  END # OUTPUT CONTROL:
+END # FLOW:Flow Analysis 1
+> update
+
+FLOW: Flow Analysis 1
+  &replace   OUTPUT CONTROL:
+    MONITOR OBJECTS:
+      EFFICIENCY OUTPUT:
+        Efficiency Calculation Method = Total to Total
+        Efficiency Type = Both Compression and Expansion
+        Inflow Boundary = R1 Inlet
+        Option = Output To Solver Monitor
+        Outflow Boundary = R1 Outlet
+      END # EFFICIENCY OUTPUT:
+      MONITOR BALANCES:
+        Option = Full
+      END # MONITOR BALANCES:
+      MONITOR FORCES:
+        Option = Full
+      END # MONITOR FORCES:
+      MONITOR PARTICLES:
+        Option = Full
+      END # MONITOR PARTICLES:
+      MONITOR POINT: PR
+        Coord Frame = Coord 0
+        Expression Value = PressureRatio
+        Option = Expression
+      END # MONITOR POINT:PR
+      MONITOR POINT: TR
+        Coord Frame = Coord 0
+        Expression Value = TemperatureRatio
+        Option = Expression
+      END # MONITOR POINT:TR
+      MONITOR RESIDUALS:
+        Option = Full
+      END # MONITOR RESIDUALS:
+      MONITOR TOTALS:
+        Option = Full
+      END # MONITOR TOTALS:
+    END # MONITOR OBJECTS:
+    RESULTS:
+      File Compression Level = Default
+      Option = Standard
+    END # RESULTS:
+  END # OUTPUT CONTROL:
+END # FLOW:Flow Analysis 1
+> update
+
+FLOW: Flow Analysis 1
+  &replace   OUTPUT CONTROL:
+    MONITOR OBJECTS:
+      EFFICIENCY OUTPUT:
+        Efficiency Calculation Method = Total to Total
+        Efficiency Type = Both Compression and Expansion
+        Inflow Boundary = R1 Inlet
+        Option = Output To Solver Monitor
+        Outflow Boundary = R1 Outlet
+      END # EFFICIENCY OUTPUT:
+      MONITOR BALANCES:
+        Option = Full
+      END # MONITOR BALANCES:
+      MONITOR FORCES:
+        Option = Full
+      END # MONITOR FORCES:
+      MONITOR PARTICLES:
+        Option = Full
+      END # MONITOR PARTICLES:
+      MONITOR POINT: PR
+        Coord Frame = Coord 0
+        Expression Value = PressureRatio
+        Option = Expression
+      END # MONITOR POINT:PR
+      MONITOR POINT: TR
+        Coord Frame = Coord 0
+        Expression Value = TemperatureRatio
+        Option = Expression
+      END # MONITOR POINT:TR
+      MONITOR RESIDUALS:
+        Option = Full
+      END # MONITOR RESIDUALS:
+      MONITOR TOTALS:
+        Option = Full
+      END # MONITOR TOTALS:
+    END # MONITOR OBJECTS:
+    RESULTS:
+      File Compression Level = Default
+      Option = Standard
+    END # RESULTS:
+  END # OUTPUT CONTROL:
+END # FLOW:Flow Analysis 1
+> update
+
+FLOW: Flow Analysis 1
+  &replace   SOLVER CONTROL:
+    Turbulence Numerics = First Order
+    ADVECTION SCHEME:
+      Option = High Resolution
+    END # ADVECTION SCHEME:
+    CONVERGENCE CONTROL:
+      Length Scale Option = Conservative
+      Maximum Number of Iterations = 350
+      Minimum Number of Iterations = 1
+      Timescale Control = Auto Timescale
+      Timescale Factor = 1.0
+    END # CONVERGENCE CONTROL:
+    CONVERGENCE CRITERIA:
+      Residual Target = 1.E-4
+      Residual Type = RMS
+    END # CONVERGENCE CRITERIA:
+    DYNAMIC MODEL CONTROL:
+      Global Dynamic Model Control = On
+    END # DYNAMIC MODEL CONTROL:
+    INTERRUPT CONTROL:
+      Option = Any Interrupt
+      CONVERGENCE CONDITIONS:
+        Option = Default Conditions
+      END # CONVERGENCE CONDITIONS:
+    END # INTERRUPT CONTROL:
+  END # SOLVER CONTROL:
+END # FLOW:Flow Analysis 1
+> update
+
+FLOW: Flow Analysis 1
+  &replace   SOLVER CONTROL:
+    Turbulence Numerics = First Order
+    ADVECTION SCHEME:
+      Option = High Resolution
+    END # ADVECTION SCHEME:
+    CONVERGENCE CONTROL:
+      Length Scale Option = Conservative
+      Maximum Number of Iterations = 350
+      Minimum Number of Iterations = 1
+      Timescale Control = Auto Timescale
+      Timescale Factor = 1.0
+    END # CONVERGENCE CONTROL:
+    CONVERGENCE CRITERIA:
+      Residual Target = 1.E-4
+      Residual Type = RMS
+    END # CONVERGENCE CRITERIA:
+    DYNAMIC MODEL CONTROL:
+      Global Dynamic Model Control = On
+    END # DYNAMIC MODEL CONTROL:
+    INTERRUPT CONTROL:
+      Option = Any Interrupt
+      CONVERGENCE CONDITIONS:
+        Option = Default Conditions
+      END # CONVERGENCE CONDITIONS:
+    END # INTERRUPT CONTROL:
+  END # SOLVER CONTROL:
+END # FLOW:Flow Analysis 1
+> update
+
+>writeCaseFile filename=C:/Users/kagan/Desktop_v2/Projects-Tutorials/Minature TurboJet/Prototype_v2/ANSYS/Batch Run/temp_def_file_load/temp_def.def, operation=\
+write def file
+> update
+
+> update
+
+# Session file stopped:  2025/11/23 19:09:52
+
