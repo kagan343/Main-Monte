@@ -11,7 +11,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from datetime import datetime
 
-# Ranges of pitch changes (only positive for now, need to fix bug in matlab code)
+# Ranges of pitch changes (can do negative values now, matlab bug was fixed)
 pitch_array = [-10,-5,-2,0,2,5,10]
 
 # Ranges for RPM and Mass flow rate (from excel calcs)
